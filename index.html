@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10273c">
+  <meta name="description" content="Explore flywheels, rolling disks, slider–crank mechanisms, gyroscopes, and conservation of angular momentum with interactive simulations.">
+  <title>Angular Momentum Lab | Engineering Dynamics</title>
+  <link rel="stylesheet" href="./styles.css">
+  <script src="./app.js" defer></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="#flywheel" aria-label="Angular Momentum Lab home">
+        <span class="brand-symbol">H<span class="brand-orbit"></span></span>
+        <span><strong>Dynamics Lab</strong><small>NYU · Learning tools</small></span>
+      </a>
+      <div class="section-label">SIMULATIONS</div>
+      <nav class="mode-list" aria-label="Choose a dynamics simulation">
+        <button type="button" class="mode-tab active" data-mode="flywheel"><span class="mode-icon">◉</span><span>Flywheel<small>Fixed-axis rotation</small></span><span class="nav-no">01</span></button>
+        <button type="button" class="mode-tab" data-mode="rolling"><span class="mode-icon">◌</span><span>Rolling disk<small>Changing reference points</small></span><span class="nav-no">02</span></button>
+        <button type="button" class="mode-tab" data-mode="slider"><span class="mode-icon">⌁</span><span>Slider–crank<small>Orbital + spin terms</small></span><span class="nav-no">03</span></button>
+        <button type="button" class="mode-tab" data-mode="gyro"><span class="mode-icon">◎</span><span>Gyroscope<small>Angular momentum in 3D</small></span><span class="nav-no">04</span></button>
+        <button type="button" class="mode-tab" data-mode="platform"><span class="mode-icon">↻</span><span>Rotating platform<small>Conservation of H</small></span><span class="nav-no">05</span></button>
+      </nav>
+      <div class="sidebar-note">
+        <span class="note-icon">↗</span>
+        <strong>Make a prediction</strong>
+        <p>Change one quantity at a time. Watch the mechanism, then check the equations.</p>
+      </div>
+      <div class="side-footer">Idealized rigid-body models<br>SI units throughout</div>
+    </aside>
+
+    <main class="workspace">
+      <header class="topbar">
+        <div><div class="eyebrow">ENGINEERING DYNAMICS <span class="eyebrow-sep">/</span> INTERACTIVE LAB</div><h1 id="mode-title">Flywheel angular momentum</h1><p id="mode-description">See how a disk's inertia and angular speed set its angular momentum.</p></div>
+        <div class="top-status"><span class="status-dot"></span>Interactive model <span class="status-index" id="mode-count">01 / 05</span></div>
+      </header>
+
+      <div class="lab-layout">
+        <section class="visual-card" aria-labelledby="view-heading">
+          <div class="card-heading"><div><span class="overline">LIVE SIMULATION</span><h2 id="view-heading">Motion &amp; vectors</h2></div><div class="legend"><span><i class="legend-swatch gold"></i>Angular momentum</span><span><i class="legend-swatch teal"></i>Velocity / rotation</span><span><i class="legend-swatch red"></i>Torque</span></div></div>
+          <div class="canvas-container"><canvas id="scene" width="1000" height="560" role="img" aria-label="Interactive dynamics mechanism and its angular momentum vectors"></canvas></div>
+          <div class="transport">
+            <button id="play-btn" class="primary-button" type="button" aria-label="Pause simulation"><span id="play-icon">Ⅱ</span><span id="play-text">Pause</span></button>
+            <button id="reset-time" class="icon-button" type="button" aria-label="Restart simulation" title="Restart simulation">↺</button>
+            <label class="time-row" for="time-scrub"><span>TIME</span><input id="time-scrub" type="range" min="0" max="12" value="0" step="0.01" aria-label="Simulation time"><output id="time-readout">0.00 s</output></label>
+            <label class="speed-picker" for="speed-select"><span>Speed</span><select id="speed-select"><option value="0.25">0.25×</option><option value="0.5">0.5×</option><option selected value="1">1×</option><option value="2">2×</option></select></label>
+          </div>
+        </section>
+
+        <aside class="parameter-card" aria-labelledby="param-heading">
+          <div class="card-heading narrow"><div><span class="overline">MODEL INPUTS</span><h2 id="param-heading">Parameters</h2></div><button type="button" id="reset-params" class="reset-button">Reset defaults</button></div>
+          <p class="input-intro">Drag a slider to update the mechanism and the calculations instantly.</p>
+          <div id="parameter-list" class="parameters"></div>
+          <div class="toggle-wrap">
+            <label class="toggle-row"><input type="checkbox" id="show-vectors" checked><span class="toggle-switch"></span><span>Show vector annotations</span></label>
+            <label class="toggle-row"><input type="checkbox" id="show-trace" checked><span class="toggle-switch"></span><span>Show motion trail</span></label>
+          </div>
+          <div class="convention-box"><span class="convention-icons"><span>⊙</span><span>⊗</span></span><div><strong>Planar sign convention</strong><p>⊙ positive <i>z</i>: out of the screen<br>⊗ negative <i>z</i>: into the screen</p></div></div>
+        </aside>
+      </div>
+
+      <div class="analysis-grid">
+        <section class="analysis-card equation-card"><div class="card-heading compact"><div><span class="overline">MATHEMATICAL MODEL</span><h2>Where the numbers come from</h2></div><span class="tag" id="model-tag">ABOUT G</span></div><div class="equations" id="equations"></div><div class="tensor-display" id="tensor-display"></div><div class="math-note" id="math-note"></div></section>
+        <section class="analysis-card components-card"><div class="card-heading compact"><div><span class="overline">LIVE OUTPUT</span><h2>Angular momentum components</h2></div><span class="unit-tag">kg·m²/s</span></div><div class="component-list" id="component-list"></div><div class="component-foot" id="component-foot"></div></section>
+      </div>
+
+      <div class="analysis-grid lower">
+        <section class="analysis-card history-card"><div class="card-heading compact"><div><span class="overline">OVER TIME</span><h2>Angular momentum history</h2></div><span class="unit-tag">H<sub>x</sub>, H<sub>y</sub>, H<sub>z</sub></span></div><canvas id="history" width="650" height="230" role="img" aria-label="Plot of angular momentum vector components over time"></canvas><div class="history-legend"><span><i style="background:#267fb0"></i>H<sub>x</sub></span><span><i style="background:#1b9f92"></i>H<sub>y</sub></span><span><i style="background:#e19b3d"></i>H<sub>z</sub></span><span class="history-tip">Drag the time slider to examine a specific instant.</span></div></section>
+        <section class="analysis-card challenge-card"><div class="card-heading compact"><div><span class="overline">CHECK YOUR UNDERSTANDING</span><h2>Think like a dynamicist</h2></div><span class="lightbulb">?</span></div><p class="challenge-question" id="challenge-question"></p><button id="reveal-btn" type="button" class="reveal-button">Reveal explanation <span>↗</span></button><div class="challenge-answer" id="challenge-answer" hidden></div></section>
+      </div>
+
+      <footer class="site-footer"><span>Built for undergraduate Engineering Dynamics. Models use ideal constraints and simplify friction, compliance and air resistance.</span><span>Reference: <a href="https://ophysics.com/r9.html" target="_blank" rel="noopener noreferrer">oPhysics interaction concept</a></span></footer>
+    </main>
+  </div>
+</body>
+</html>
